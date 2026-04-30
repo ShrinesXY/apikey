@@ -4,6 +4,10 @@
     {
       "src": "backend/server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "frontend/public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -24,7 +28,11 @@
       "dest": "frontend/public/pages/$1"
     },
     {
-      "src": "/(.*\\.(html|css|js|ico|png|jpg|svg|json))",
+      "src": "/index.html",
+      "dest": "frontend/public/index.html"
+    },
+    {
+      "src": "/(.*\\.(css|js|ico|png|jpg|svg|webp|woff|woff2))",
       "dest": "frontend/public/$1"
     },
     {
