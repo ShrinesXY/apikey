@@ -28,7 +28,7 @@
       "dest": "frontend/public/pages/$1"
     },
     {
-      "src": "/index.html",
+      "src": "/",
       "dest": "frontend/public/index.html"
     },
     {
@@ -41,3 +41,4 @@
     }
   ]
 }
+
