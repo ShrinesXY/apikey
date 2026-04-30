@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — AZPKEY</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="dashboard">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-mark">AZP</span><span class="logo-key">KEY</span>
+      <span class="logo-since" style="font-size:9px;">since 2025</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Main</div>
+      <button class="sidebar-link active" data-page="overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </button>
+      <button class="sidebar-link" data-page="keys">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        API Keys
+      </button>
+      <button class="sidebar-link" data-page="logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Request Logs
+      </button>
+      <div class="sidebar-section-label">Account</div>
+      <a href="/pages/docs.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Documentation
+      </a>
+      <button class="sidebar-link" id="adminLink" style="display:none" onclick="window.location.href='/pages/admin.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Admin Panel
+      </button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="user-avatar" id="sidebarAvatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebarUsername">Loading...</div>
+          <div class="user-tier" id="sidebarTier">free</div>
+        </div>
+      </div>
+      <button class="sidebar-link" id="logoutBtn" style="margin-top:4px;color:var(--red)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content" id="mainContent">
+    <!-- OVERVIEW PAGE -->
+    <div id="page-overview">
+      <div class="page-header">
+        <h1>Overview</h1>
+        <p id="welcomeMsg">Good morning</p>
+      </div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-card-label">Total Usage</div><div class="stat-card-value" id="statTotalUsage">—</div><div class="stat-card-sub">requests made</div></div>
+        <div class="stat-card"><div class="stat-card-label">Total Limit</div><div class="stat-card-value" id="statTotalLimit">—</div><div class="stat-card-sub">across all keys</div></div>
+        <div class="stat-card"><div class="stat-card-label">Active Keys</div><div class="stat-card-value" id="statActiveKeys">—</div><div class="stat-card-sub">of <span id="statTotalKeys">—</span> total</div></div>
+        <div class="stat-card"><div class="stat-card-label">Current Tier</div><div class="stat-card-value" id="statTier" style="font-size:20px">—</div><div class="stat-card-sub">account plan</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Request Activity</div>
+            <div class="card-subtitle">Last 7 days</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="usageChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- KEYS PAGE -->
+    <div id="page-keys" style="display:none">
+      <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <h1>API Keys</h1>
+          <p>Manage and monitor your API keys</p>
+        </div>
+        <button class="btn-primary" id="openGenerateModal">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Generate Key
+        </button>
+      </div>
+      <div id="limitWarning" class="limit-warning" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="limitWarningText"></span>
+      </div>
+      <div id="keysContainer">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          <h3>No API keys yet</h3>
+          <p>Generate your first API key to get started.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGS PAGE -->
+    <div id="page-logs" style="display:none">
+      <div class="page-header">
+        <h1>Request Logs</h1>
+        <p>Audit trail of all API requests</p>
+      </div>
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Endpoint</th>
+                <th>Method</th>
+                <th>Status</th>
+                <th>Response Time</th>
+                <th>IP</th>
+              </tr>
+            </thead>
+            <tbody id="logsBody">
+              <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)"><span class="loading-spinner"></span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="logsPagination" style="display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--border);margin-top:8px">
+          <span id="logsInfo" style="font-size:13px;color:var(--text-3)"></span>
+          <div style="display:flex;gap:8px">
+            <button class="btn-outline btn-sm" id="logsPrev">← Prev</button>
+            <button class="btn-outline btn-sm" id="logsNext">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- GENERATE KEY MODAL -->
+<div class="modal-overlay" id="generateModal">
+  <div class="modal">
+    <div class="modal-title">Generate API Key</div>
+    <div class="modal-subtitle">Create a new API key for your project</div>
+    <div class="form-error" id="genError"></div>
+    <div class="form-group">
+      <label>Key Name</label>
+      <input type="text" id="genName" placeholder="My Production Key" maxlength="50" />
+    </div>
+    <div class="form-group">
+      <label>Expires In (days)</label>
+      <input type="number" id="genExpiry" placeholder="30" min="1" max="365" value="30" />
+    </div>
+    <div class="form-group">
+      <label>IP Whitelist <span style="color:var(--text-3);font-weight:400">(optional, comma-separated)</span></label>
+      <input type="text" id="genIpWhitelist" placeholder="192.168.1.1, 10.0.0.1" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" id="closeGenerateModal">Cancel</button>
+      <button class="btn-primary" id="generateKeyBtn">Generate Key</button>
+    </div>
+  </div>
+</div>
+
+<!-- REVEAL KEY MODAL -->
+<div class="modal-overlay" id="revealModal">
+  <div class="modal">
+    <div class="modal-title">Your API Key</div>
+    <div class="modal-subtitle">Copy and store this key securely. It won't be shown again in full.</div>
+    <div class="key-value-row" style="margin-top:16px">
+      <span class="key-value revealed" id="revealedKey" style="font-size:12px;word-break:break-all;white-space:normal"></span>
+      <button class="copy-btn" id="copyRevealedKey" title="Copy key">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      </button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="closeRevealModal">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <div class="modal-title" id="confirmTitle">Are you sure?</div>
+    <div class="modal-subtitle" id="confirmMsg"></div>
+    <div class="modal-actions">
+      <button class="btn-outline" id="confirmCancel">Cancel</button>
+      <button class="btn-danger" id="confirmOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script>
+if (!requireAuth()) throw 'not authed';
+
+let currentUser = null;
+let logsPage = 1;
+let usageChartInstance = null;
+
+// SIDEBAR navigation
+document.querySelectorAll('.sidebar-link[data-page]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const page = btn.dataset.page;
+    ['overview','keys','logs'].forEach(p => {
+      document.getElementById('page-' + p).style.display = p === page ? 'block' : 'none';
+    });
+    if (page === 'logs') loadLogs();
+    if (page === 'keys') loadKeys();
+    if (page === 'overview') loadOverview();
+  });
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  localStorage.removeItem('azpkey_token');
+  localStorage.removeItem('azpkey_user');
+  window.location.href = '/pages/login.html';
+});
+
+async function init() {
+  try {
+    const data = await api.me();
+    currentUser = data.user;
+    document.getElementById('sidebarUsername').textContent = currentUser.username;
+    document.getElementById('sidebarTier').textContent = currentUser.tier;
+    document.getElementById('sidebarAvatar').textContent = currentUser.username[0].toUpperCase();
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('welcomeMsg').textContent = `${greeting}, ${currentUser.username}`;
+    if (currentUser.role === 'admin') document.getElementById('adminLink').style.display = 'flex';
+    loadOverview();
+  } catch (e) {
+    localStorage.removeItem('azpkey_token');
+    window.location.href = '/pages/login.html';
+  }
+}
+
+async function loadOverview() {
+  try {
+    const data = await api.getStats();
+    const s = data.data;
+    document.getElementById('statTotalUsage').textContent = s.totalUsage.toLocaleString();
+    document.getElementById('statTotalLimit').textContent = s.totalLimit.toLocaleString();
+    document.getElementById('statActiveKeys').textContent = s.activeKeys;
+    document.getElementById('statTotalKeys').textContent = s.totalKeys;
+    document.getElementById('statTier').textContent = s.tier.charAt(0).toUpperCase() + s.tier.slice(1);
+
+    // Chart
+    const labels = [];
+    const values = [];
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now); d.setDate(d.getDate() - i);
+      const key = d.toISOString().split('T')[0];
+      labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }));
+      const found = s.usageChart.find(c => c._id === key);
+      values.push(found ? found.count : 0);
+    }
+
+    if (usageChartInstance) usageChartInstance.destroy();
+    const ctx = document.getElementById('usageChart').getContext('2d');
+    usageChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Requests',
+          data: values,
+          backgroundColor: 'rgba(229,229,229,0.1)',
+          borderColor: 'rgba(229,229,229,0.4)',
+          borderWidth: 1,
+          borderRadius: 4,
+          hoverBackgroundColor: 'rgba(229,229,229,0.2)',
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#737373', font: { family: 'IBM Plex Mono', size: 11 } } },
+          y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#737373', font: { family: 'IBM Plex Mono', size: 11 } }, beginAtZero: true }
+        }
+      }
+    });
+  } catch (e) { console.error(e); }
+}
+
+async function loadKeys() {
+  const container = document.getElementById('keysContainer');
+  try {
+    const data = await api.getKeys();
+    const keys = data.data;
+
+    if (!keys.length) {
+      container.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        <h3>No API keys yet</h3><p>Generate your first API key to get started.</p></div>`;
+      return;
+    }
+
+    // Check any key approaching limit
+    const nearLimit = keys.find(k => k.status === 'active' && (k.usageCount / k.requestLimit) >= 0.8);
+    const warningEl = document.getElementById('limitWarning');
+    if (nearLimit) {
+      document.getElementById('limitWarningText').textContent = `"${nearLimit.name}" is at ${Math.round(nearLimit.usageCount/nearLimit.requestLimit*100)}% of its request limit.`;
+      warningEl.style.display = 'flex';
+    } else {
+      warningEl.style.display = 'none';
+    }
+
+    container.innerHTML = keys.map(k => renderKeyCard(k)).join('');
+    attachKeyActions();
+  } catch (e) {
+    container.innerHTML = `<div class="empty-state"><p style="color:var(--red)">${e.message}</p></div>`;
+  }
+}
+
+function renderKeyCard(k) {
+  const pct = Math.round((k.usageCount / k.requestLimit) * 100);
+  const fillClass = usageColor(pct);
+  const expires = daysUntil(k.expiresAt);
+  const tierClass = 'tier-' + k.tier;
+  const statusClass = 'status-' + k.status;
+
+  return `<div class="key-card" id="key-${k._id}">
+    <div class="key-card-header">
+      <div>
+        <div class="key-name">${k.name}</div>
+        <div class="key-meta">Created ${formatDate(k.createdAt)} · Expires in ${expires}d · Last used: ${k.lastUsed ? formatDateTime(k.lastUsed) : 'Never'}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <span class="tier-badge ${tierClass}">${k.tier}</span>
+        <span class="status-badge ${statusClass}"><span class="status-dot"></span>${k.status}</span>
+      </div>
+    </div>
+    <div class="key-value-row">
+      <span class="key-value" id="keyVal-${k._id}">${maskKey(k.key)}</span>
+      <button class="copy-btn" onclick="copyKey('${k.key}')" title="Copy key">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      </button>
+    </div>
+    <div class="key-usage-bar">
+      <div class="key-usage-fill ${fillClass}" style="width:${Math.min(pct,100)}%"></div>
+    </div>
+    <div class="key-stats">
+      <div class="key-stat"><span class="key-stat-label">Usage</span><span class="key-stat-value">${k.usageCount.toLocaleString()} / ${k.requestLimit.toLocaleString()}</span></div>
+      <div class="key-stat"><span class="key-stat-label">Remaining</span><span class="key-stat-value">${(k.requestLimit - k.usageCount).toLocaleString()}</span></div>
+      <div class="key-stat"><span class="key-stat-label">Rate Limit</span><span class="key-stat-value">${k.tier === 'free' ? '10' : k.tier === 'pro' ? '60' : '300'} req/s</span></div>
+      ${k.ipWhitelist && k.ipWhitelist.length ? `<div class="key-stat"><span class="key-stat-label">IP Whitelist</span><span class="key-stat-value">${k.ipWhitelist.length} IPs</span></div>` : ''}
+    </div>
+    <div class="key-actions">
+      ${k.status === 'active' ? `
+        <button class="btn-outline btn-sm" onclick="confirmAction('Regenerate key &quot;${k.name}&quot;?', 'This will invalidate the current key immediately.', () => doRegenerate('${k._id}'))">↺ Regenerate</button>
+        <button class="btn-outline btn-sm" onclick="confirmAction('Revoke key &quot;${k.name}&quot;?', 'This will permanently disable this key.', () => doRevoke('${k._id}'))">⊘ Revoke</button>
+      ` : ''}
+      <button class="btn-danger btn-sm" onclick="confirmAction('Delete key &quot;${k.name}&quot;?', 'This action cannot be undone.', () => doDelete('${k._id}'))">✕ Delete</button>
+    </div>
+  </div>`;
+}
+
+function attachKeyActions() {}
+
+async function doRegenerate(id) {
+  try {
+    await api.regenerateKey(id);
+    notify('Key regenerated successfully');
+    loadKeys();
+  } catch (e) { notify(e.message, 'error'); }
+}
+
+async function doRevoke(id) {
+  try {
+    await api.revokeKey(id);
+    notify('Key revoked');
+    loadKeys();
+  } catch (e) { notify(e.message, 'error'); }
+}
+
+async function doDelete(id) {
+  try {
+    await api.deleteKey(id);
+    notify('Key deleted');
+    loadKeys();
+  } catch (e) { notify(e.message, 'error'); }
+}
+
+function copyKey(key) {
+  navigator.clipboard.writeText(key).then(() => notify('API key copied to clipboard'));
+}
+
+// Generate key modal
+document.getElementById('openGenerateModal').addEventListener('click', () => {
+  document.getElementById('generateModal').classList.add('open');
+});
+document.getElementById('closeGenerateModal').addEventListener('click', () => {
+  document.getElementById('generateModal').classList.remove('open');
+});
+
+document.getElementById('generateKeyBtn').addEventListener('click', async () => {
+  const name = document.getElementById('genName').value.trim();
+  const expiry = document.getElementById('genExpiry').value;
+  const ipWhitelist = document.getElementById('genIpWhitelist').value.trim();
+  const errEl = document.getElementById('genError');
+  errEl.classList.remove('show');
+
+  if (!name) return (errEl.textContent = 'Key name is required.', errEl.classList.add('show'));
+
+  try {
+    const data = await api.createKey({ name, expiresInDays: parseInt(expiry) || 30, ipWhitelist });
+    document.getElementById('generateModal').classList.remove('open');
+    document.getElementById('genName').value = '';
+    document.getElementById('genIpWhitelist').value = '';
+
+    // Show full key once
+    document.getElementById('revealedKey').textContent = data.data.key;
+    document.getElementById('revealModal').classList.add('open');
+    loadKeys();
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.classList.add('show');
+  }
+});
+
+document.getElementById('copyRevealedKey').addEventListener('click', () => {
+  const key = document.getElementById('revealedKey').textContent;
+  navigator.clipboard.writeText(key).then(() => notify('Key copied!'));
+});
+document.getElementById('closeRevealModal').addEventListener('click', () => {
+  document.getElementById('revealModal').classList.remove('open');
+});
+
+// Confirm modal
+let confirmCallback = null;
+function confirmAction(title, msg, cb) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  confirmCallback = cb;
+  document.getElementById('confirmModal').classList.add('open');
+}
+document.getElementById('confirmCancel').addEventListener('click', () => {
+  document.getElementById('confirmModal').classList.remove('open');
+  confirmCallback = null;
+});
+document.getElementById('confirmOk').addEventListener('click', () => {
+  document.getElementById('confirmModal').classList.remove('open');
+  if (confirmCallback) { confirmCallback(); confirmCallback = null; }
+});
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+
+// LOGS
+async function loadLogs() {
+  const tbody = document.getElementById('logsBody');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px"><span class="loading-spinner"></span></td></tr>';
+  try {
+    const data = await api.getLogs(logsPage);
+    const logs = data.data;
+    const p = data.pagination;
+
+    document.getElementById('logsInfo').textContent = `${((p.page-1)*p.limit)+1}–${Math.min(p.page*p.limit, p.total)} of ${p.total} logs`;
+    document.getElementById('logsPrev').disabled = p.page <= 1;
+    document.getElementById('logsNext').disabled = p.page >= p.pages;
+
+    if (!logs.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-3)">No logs yet</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = logs.map(l => {
+      const statusColor = l.statusCode >= 500 ? 'var(--red)' : l.statusCode >= 400 ? 'var(--yellow)' : 'var(--green)';
+      return `<tr>
+        <td style="font-family:var(--mono);font-size:12px;color:var(--text-3)">${formatDateTime(l.createdAt)}</td>
+        <td><code>${l.endpoint}</code></td>
+        <td><span class="method-badge method-${(l.method||'GET').toLowerCase()}">${l.method || 'GET'}</span></td>
+        <td><span style="color:${statusColor};font-family:var(--mono);font-size:13px">${l.statusCode || '—'}</span></td>
+        <td style="font-family:var(--mono);font-size:13px;color:var(--text-3)">${l.responseTime ? l.responseTime + 'ms' : '—'}</td>
+        <td style="font-family:var(--mono);font-size:12px;color:var(--text-3)">${l.ip || '—'}</td>
+      </tr>`;
+    }).join('');
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--red);padding:20px">${e.message}</td></tr>`;
+  }
+}
+
+document.getElementById('logsPrev').addEventListener('click', () => { logsPage--; loadLogs(); });
+document.getElementById('logsNext').addEventListener('click', () => { logsPage++; loadLogs(); });
+
+init();
+</script>
+</body>
+</html>
