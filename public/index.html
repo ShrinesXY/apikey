@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AZPKEY — API Key Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <span class="logo-mark">AZP</span><span class="logo-key">KEY</span>
+        <span class="logo-since">since 2025</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="/pages/docs.html">Docs</a>
+        <a href="/pages/login.html" class="btn-ghost">Login</a>
+        <a href="/pages/register.html" class="btn-primary">Get Started</a>
+      </div>
+      <button class="nav-toggle" id="navToggle">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="grid-lines"></div>
+      <div class="glow glow-1"></div>
+      <div class="glow glow-2"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>Now live — azpkey.biz.id</span>
+      </div>
+      <h1 class="hero-title">
+        API Key Management<br />
+        <span class="title-accent">Built for Developers</span>
+      </h1>
+      <p class="hero-subtitle">
+        Generate, monitor, and secure your API keys with tier-based access control,
+        real-time analytics, and enterprise-grade protection.
+      </p>
+      <div class="hero-cta">
+        <a href="/pages/register.html" class="btn-primary btn-lg">Start for Free</a>
+        <a href="/pages/docs.html" class="btn-outline btn-lg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          View Docs
+        </a>
+      </div>
+      <div class="hero-code">
+        <div class="code-header">
+          <span class="code-dot red"></span>
+          <span class="code-dot yellow"></span>
+          <span class="code-dot green"></span>
+          <span class="code-lang">bash</span>
+        </div>
+        <pre class="code-body"><span class="code-comment"># Use your API key in any request</span>
+curl https://azpkey.biz.id/api/data \
+  -H <span class="code-str">"x-api-key: azp_your_key_here"</span>
+
+<span class="code-comment"># Response</span>
+<span class="code-json">{
+  "success": true,
+  "data": { "remaining": 998, "tier": "pro" }
+}</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat"><span class="stat-num">99.9%</span><span class="stat-label">Uptime SLA</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">&lt;10ms</span><span class="stat-label">Avg Response</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">3 Tiers</span><span class="stat-label">Free to Premium</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">AES-256</span><span class="stat-label">Key Encryption</span></div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-inner">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Everything you need to manage API access</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <h3>Secure Key Generation</h3>
+          <p>Cryptographically random 64-char keys prefixed with <code>azp_</code>. Rotate anytime without downtime.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3>Real-time Monitoring</h3>
+          <p>Track request counts, usage trends, and limit consumption with live charts and instant alerts.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>IP Whitelisting</h3>
+          <p>Restrict API key usage to specific IP addresses. Available on Pro and Premium tiers.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <h3>Rate Limiting</h3>
+          <p>Per-key rate limits enforced per second. Prevents abuse while maintaining performance for legit traffic.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <h3>Request Logging</h3>
+          <p>Full audit trail with endpoint, timestamp, status code, and response time. 30-day retention.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <h3>Admin Panel</h3>
+          <p>Full control over users, tiers, bans, and key limits from a centralized admin dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <div class="section-inner">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Simple, transparent pricing</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-price"><span class="price-num">$0</span><span class="price-period">/month</span></div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>1,000 requests/month</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>10 req/sec rate limit</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>2 API keys</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Basic API access</li>
+            <li class="disabled"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>IP Whitelist</li>
+          </ul>
+          <a href="/pages/register.html" class="btn-outline plan-btn">Get Started</a>
+        </div>
+        <div class="pricing-card featured">
+          <div class="plan-badge">Most Popular</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price"><span class="price-num">$12</span><span class="price-period">/month</span></div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>50,000 requests/month</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>60 req/sec rate limit</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>10 API keys</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>IP Whitelist</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Priority support</li>
+          </ul>
+          <a href="/pages/register.html" class="btn-primary plan-btn">Get Pro</a>
+        </div>
+        <div class="pricing-card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price"><span class="price-num">$49</span><span class="price-period">/month</span></div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>500,000 requests/month</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>300 req/sec rate limit</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>50 API keys</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>IP Whitelist + Custom expiry</li>
+            <li><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Dedicated support</li>
+          </ul>
+          <a href="/pages/register.html" class="btn-outline plan-btn">Get Premium</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-mark">AZP</span><span class="logo-key">KEY</span>
+        <span class="footer-since">since 2025</span>
+        <p>Professional API key management for modern developers.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="/pages/docs.html">Docs</a>
+        </div>
+        <div class="footer-col">
+          <h4>Account</h4>
+          <a href="/pages/login.html">Login</a>
+          <a href="/pages/register.html">Register</a>
+          <a href="/pages/dashboard.html">Dashboard</a>
+        </div>
+        <div class="footer-col">
+          <h4>API</h4>
+          <a href="/api/docs">Swagger UI</a>
+          <a href="/pages/docs.html">Documentation</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 AZPKEY — azpkey.biz.id</span>
+      <span>Built with Node.js + MongoDB</span>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
