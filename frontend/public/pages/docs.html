@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentation — AZPKEY</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <span class="logo-mark">AZP</span><span class="logo-key">KEY</span>
+        <span class="logo-since">since 2025</span>
+      </a>
+      <div class="nav-links">
+        <a href="/#features">Features</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/api/docs" target="_blank">Swagger UI</a>
+        <a href="/pages/login.html" class="btn-ghost">Login</a>
+        <a href="/pages/register.html" class="btn-primary">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <h4>Getting Started</h4>
+      <a href="#intro" class="active">Introduction</a>
+      <a href="#quickstart">Quick Start</a>
+      <a href="#authentication">Authentication</a>
+
+      <h4>API Keys</h4>
+      <a href="#generate-key">Generate Key</a>
+      <a href="#using-key">Using a Key</a>
+      <a href="#key-tiers">Tiers & Limits</a>
+      <a href="#ip-whitelist">IP Whitelist</a>
+
+      <h4>Endpoints</h4>
+      <a href="#auth-endpoints">Auth Endpoints</a>
+      <a href="#key-endpoints">Key Management</a>
+      <a href="#protected">Protected API</a>
+
+      <h4>Reference</h4>
+      <a href="#errors">Error Codes</a>
+      <a href="#rate-limits">Rate Limits</a>
+      <a href="#examples">Code Examples</a>
+    </aside>
+
+    <div class="docs-content">
+      <div id="intro">
+        <h1>AZPKEY Documentation</h1>
+        <p>AZPKEY is a complete API key management system. Generate and manage API keys, monitor usage, and protect your endpoints with tier-based access control.</p>
+        <p>Base URL: <code>https://azpkey.biz.id</code></p>
+        <p>Interactive API reference: <a href="/api/docs" style="color:var(--text)">Swagger UI →</a></p>
+      </div>
+
+      <h2 id="quickstart">Quick Start</h2>
+      <p>Get started in 3 steps:</p>
+      <ol>
+        <li>Register an account at <code>/pages/register.html</code></li>
+        <li>Generate an API key from your dashboard</li>
+        <li>Include the key in your request headers</li>
+      </ol>
+      <pre>curl https://azpkey.biz.id/api/data \
+  -H "x-api-key: azp_your_key_here"</pre>
+
+      <h2 id="authentication">Authentication</h2>
+      <p>The dashboard API uses JWT bearer tokens. Obtain a token by logging in, then include it in subsequent requests:</p>
+      <pre>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</pre>
+      <p>Protected API endpoints use an <code>x-api-key</code> header instead of JWT:</p>
+      <pre>x-api-key: azp_64characterrandomhexstringhere...</pre>
+
+      <h2 id="generate-key">Generate an API Key</h2>
+      <p>You can generate keys from the dashboard or via the API:</p>
+      <pre>POST /api/keys
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+
+{
+  "name": "My Production Key",
+  "expiresInDays": 30,
+  "ipWhitelist": "192.168.1.1, 10.0.0.1"
+}</pre>
+      <p>Response includes the full API key (only shown once at creation):</p>
+      <pre>{
+  "success": true,
+  "data": {
+    "key": "azp_a1b2c3d4e5f6...",
+    "name": "My Production Key",
+    "tier": "free",
+    "requestLimit": 1000,
+    "usageCount": 0,
+    "status": "active",
+    "expiresAt": "2025-06-15T12:00:00.000Z"
+  }
+}</pre>
+
+      <h2 id="using-key">Using a Key</h2>
+      <p>Include your API key in the <code>x-api-key</code> request header for every protected request:</p>
+      <pre># cURL
+curl https://azpkey.biz.id/api/data \
+  -H "x-api-key: azp_yourkeyhere"
+
+# JavaScript (fetch)
+const response = await fetch('https://azpkey.biz.id/api/data', {
+  headers: { 'x-api-key': 'azp_yourkeyhere' }
+});
+
+# Python (requests)
+import requests
+r = requests.get(
+  'https://azpkey.biz.id/api/data',
+  headers={'x-api-key': 'azp_yourkeyhere'}
+)
+
+# Node.js (axios)
+const axios = require('axios');
+const res = await axios.get('https://azpkey.biz.id/api/data', {
+  headers: { 'x-api-key': 'azp_yourkeyhere' }
+});</pre>
+
+      <h2 id="key-tiers">Tiers & Limits</h2>
+      <p>AZPKEY has three tiers with different request limits and rate limits:</p>
+      <div class="endpoint-block">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">FREE</span>
+          <span class="endpoint-path">1,000 req/month</span>
+          <span class="endpoint-desc">10 req/sec · 2 keys max</span>
+        </div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header">
+          <span class="method-badge method-post">PRO</span>
+          <span class="endpoint-path">50,000 req/month</span>
+          <span class="endpoint-desc">60 req/sec · 10 keys max · IP Whitelist</span>
+        </div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header">
+          <span class="method-badge method-put">PREMIUM</span>
+          <span class="endpoint-path">500,000 req/month</span>
+          <span class="endpoint-desc">300 req/sec · 50 keys max · IP Whitelist + Custom expiry</span>
+        </div>
+      </div>
+
+      <h2 id="ip-whitelist">IP Whitelist</h2>
+      <p>Pro and Premium keys support IP whitelisting. Only requests from listed IPs will be accepted. Leave empty to allow all IPs.</p>
+      <pre>// Set when creating key
+{
+  "name": "Restricted Key",
+  "ipWhitelist": "203.0.113.1, 198.51.100.0"
+}
+
+// Update existing key
+PUT /api/keys/:id
+{ "ipWhitelist": "203.0.113.1" }</pre>
+
+      <h2 id="auth-endpoints">Auth Endpoints</h2>
+      <div class="endpoint-block">
+        <div class="endpoint-header">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/api/auth/register</span>
+          <span class="endpoint-desc">Register new account</span>
+        </div>
+        <div class="endpoint-body">
+          <pre>{ "username": "johndoe", "email": "john@example.com", "password": "Password123" }</pre>
+        </div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/api/auth/login</span>
+          <span class="endpoint-desc">Login and get JWT</span>
+        </div>
+        <div class="endpoint-body">
+          <pre>{ "email": "john@example.com", "password": "Password123" }</pre>
+        </div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">/api/auth/me</span>
+          <span class="endpoint-desc">Get current user profile (requires Bearer token)</span>
+        </div>
+      </div>
+
+      <h2 id="key-endpoints">Key Management Endpoints</h2>
+      <p>All key endpoints require <code>Authorization: Bearer &lt;token&gt;</code>.</p>
+      <div class="endpoint-block">
+        <div class="endpoint-header"><span class="method-badge method-get">GET</span><span class="endpoint-path">/api/keys</span><span class="endpoint-desc">List all your keys</span></div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header"><span class="method-badge method-post">POST</span><span class="endpoint-path">/api/keys</span><span class="endpoint-desc">Generate new key</span></div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header"><span class="method-badge method-put">PUT</span><span class="endpoint-path">/api/keys/:id/regenerate</span><span class="endpoint-desc">Rotate key (invalidates old key)</span></div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header"><span class="method-badge method-put">PUT</span><span class="endpoint-path">/api/keys/:id/revoke</span><span class="endpoint-desc">Revoke key permanently</span></div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header"><span class="method-badge method-delete">DEL</span><span class="endpoint-path">/api/keys/:id</span><span class="endpoint-desc">Delete key</span></div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header"><span class="method-badge method-get">GET</span><span class="endpoint-path">/api/keys/stats</span><span class="endpoint-desc">Usage statistics + chart data</span></div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header"><span class="method-badge method-get">GET</span><span class="endpoint-path">/api/keys/logs</span><span class="endpoint-desc">Request logs (paginated)</span></div>
+      </div>
+
+      <h2 id="protected">Protected API Endpoints</h2>
+      <p>These endpoints require a valid <code>x-api-key</code> header.</p>
+      <div class="endpoint-block">
+        <div class="endpoint-header"><span class="method-badge method-get">GET</span><span class="endpoint-path">/api/data</span><span class="endpoint-desc">Example protected data endpoint</span></div>
+      </div>
+      <div class="endpoint-block">
+        <div class="endpoint-header"><span class="method-badge method-get">GET</span><span class="endpoint-path">/api/data/ping</span><span class="endpoint-desc">Quick key validation ping</span></div>
+      </div>
+
+      <h2 id="errors">Error Codes</h2>
+      <pre>401 - Missing or invalid API key / JWT token
+403 - Key revoked, expired, banned account, or IP not whitelisted
+429 - Rate limit exceeded (per second) or request limit reached
+400 - Validation error
+404 - Endpoint not found
+500 - Internal server error</pre>
+      <p>All error responses follow this format:</p>
+      <pre>{
+  "success": false,
+  "error": "API key has expired",
+  "hint": "Generate a new key from your dashboard"
+}</pre>
+
+      <h2 id="rate-limits">Rate Limits</h2>
+      <p>Two layers of rate limiting are enforced:</p>
+      <ul>
+        <li><strong>Global:</strong> 500 requests per 15 minutes per IP (applies to all endpoints)</li>
+        <li><strong>Per-key:</strong> Tier-based requests per second (Free: 10, Pro: 60, Premium: 300)</li>
+        <li><strong>Monthly limit:</strong> Hard cap on total requests per key based on tier</li>
+        <li><strong>Auth endpoints:</strong> 20 attempts per 15 minutes per IP</li>
+      </ul>
+      <p>When a rate limit is exceeded, the response includes a <code>retryAfter</code> field:</p>
+      <pre>{
+  "success": false,
+  "error": "Rate limit exceeded",
+  "limit": "10 requests/second",
+  "retryAfter": 1
+}</pre>
+
+      <h2 id="examples">Code Examples</h2>
+      <h3>Full workflow in JavaScript</h3>
+      <pre>// 1. Register
+const register = await fetch('/api/auth/register', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username: 'dev', email: 'dev@example.com', password: 'Password123' })
+});
+const { token } = await register.json();
+
+// 2. Generate API key
+const keyRes = await fetch('/api/keys', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+  body: JSON.stringify({ name: 'My Key', expiresInDays: 30 })
+});
+const { data: { key } } = await keyRes.json();
+
+// 3. Use the key
+const data = await fetch('/api/data', {
+  headers: { 'x-api-key': key }
+});
+console.log(await data.json());</pre>
+
+      <h3>Python</h3>
+      <pre>import requests
+
+# Login
+res = requests.post('https://azpkey.biz.id/api/auth/login', json={
+    'email': 'you@example.com', 'password': 'yourpassword'
+})
+token = res.json()['token']
+
+# Generate key
+key_res = requests.post('https://azpkey.biz.id/api/keys',
+    json={'name': 'Python Key', 'expiresInDays': 30},
+    headers={'Authorization': f'Bearer {token}'}
+)
+api_key = key_res.json()['data']['key']
+
+# Call protected endpoint
+r = requests.get('https://azpkey.biz.id/api/data',
+    headers={'x-api-key': api_key}
+)
+print(r.json())</pre>
+
+    </div>
+  </div>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
+
+    // Highlight active sidebar link on scroll
+    const sections = document.querySelectorAll('[id]');
+    const sideLinks = document.querySelectorAll('.docs-sidebar a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+      sideLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    });
+  </script>
+</body>
+</html>
